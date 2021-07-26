@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="dictionary" default="ARUCO_MIP_36h12"/>
+  <arg name="marker_size" default="0.16"/>
+  <arg name="marker_size_override" default="" />
+  <arg name="use_enclosed" default="false"/>
+  <arg name="use_pose_tracker" default="false"/>
+  <arg name="camera_name" default="camera"/>
+  <arg name="reference_frame" default=""/>
+  <arg name="visualize" default="false"/>
+
+  <node pkg="aruco_ros" type="simple_single" name="aruco" output="screen">
+    <remap from="/camera_info" to="/$(arg camera_name)/camera_info"/>
+    <remap from="/image" to="/$(arg camera_name)/image_rect_color"/>
+    <param name="image_is_rectified" value="true"/>
+    <param name="dictionary" value="$(arg dictionary)"/>
+    <param name="marker_size" value="$(arg marker_size)"/>
+    <param name="marker_size_override" value="$(arg marker_size_override)"/>
+    <param name="use_enclosed" value="$(arg use_enclosed)"/>
+    <param name="reference_frame" value="$(arg reference_frame)"/>
+    <param name="corner_refinement" value="CORNER_SUBPIX"/>
+    <param name="rotate_marker_axis" value="false"/>
+    <param name="use_pose_tracker" value="$(arg use_pose_tracker)"/>
+  </node>
+
+  <node pkg="image_view" type="image_view" name="image_view" if="$(arg visualize)">
+    <remap from="image" to="aruco/result"/>
+  </node>
+
+</launch>

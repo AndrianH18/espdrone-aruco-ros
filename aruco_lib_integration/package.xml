@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>aruco_lib_integration</name>
+  <version>0.0.0</version>
+  <description>The aruco_lib_integration package</description>
+  <maintainer email="ubuntu@todo.todo">ubuntu</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <build_type>catkin</build_type>
+  </export>
+
+</package>

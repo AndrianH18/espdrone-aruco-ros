@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>esp_drone_ros</name>
+  <version>1.0.0</version>
+  <description>ROS package for interfacing with ESP-Drone-NH (our modified ESP-drone for 'uavionics_dip' project)</description>
+
+  <maintainer email="andrianhuang@yahoo.com">Andrian Huang</maintainer>
+  <maintainer email="ubuntu@todo.todo">Nelsen Edbert Winata</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>image_transport</depend>
+  
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

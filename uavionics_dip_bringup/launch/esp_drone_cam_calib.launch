@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <!--
+  ================== HOW TO PERFORM CAMERA CALIBRATION ==================
+  
+  1.Prepare a camera calibration checkerboard. Turn on the ESP-drone and make sure that the drone and this computer are connected to the
+    same Wifi network.
+
+  2.Launch this launch file. In the terminal:
+
+      roslaunch uavionics_dip_bringup esp_drone_cam_calib.launch
+
+    A calibration window showing the camera feed from the ESP-drone should then appear.
+  
+  3.Try to get all bars to show green (to obtain enough data), then click "Calibrate" on the calibration window.
+  
+  4.After the calibration is complete, click "Save" on the calibration window to write the camera calibration data to a YML file (zipped).
+    The full path to the saved calibration data is /tmp/calibrationdata.tar.gz.
+  
+  5.Unzip the saved file, then copy the calibration file to the 'uavionics_dip_bringup' folder/ROS package. In the terminal:
+
+      # Unzip the calibration data...
+      cd /tmp
+      tar -xvf calibrationdata.tar.gz
+
+      # Copy the YML file to 'uavionics_dip_bringup' (assuming your Catkin workspace is named 'catkin_ws')...
+      cp ost.yml ~/catkin_ws/src/uavionics_dip/uavionics_dip_bringup/config/camera_calib/
+
+  -->
+  
+  <!-- Configurations -->
+  <arg name="drone_name" default="esp_drone"/>
+  <arg name="drone_ip_addr" default="192.168.0.113"/>
+  <arg name="checkerboard_size" default="9x7"/>
+  <arg name="checkerboard_square_size" default="0.02"/>
+
+  <!-- Drone camera publisher node -->
+  <node pkg="esp_drone_ros" type="drone_camera_streamer.py" name="drone_camera_streamer" output="screen">
+    <param name="drone_name" type="string" value="$(arg drone_name)" />
+    <param name="drone_ip_addr" type="string" value="$(arg drone_ip_addr)"/>
+  </node>
+
+  <!-- ROS camera calibration node -->
+  <node pkg="camera_calibration" type="cameracalibrator.py" name="camera_calibrator" output="screen"
+        args="--size $(arg checkerboard_size) --square $(arg checkerboard_square_size) --no-service-check">
+    <remap from="image" to="/$(arg drone_name)/camera_stream"/>
+  </node>
+
+</launch>
