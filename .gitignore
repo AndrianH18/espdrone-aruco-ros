@@ -1,4 +1,5 @@
 .vscode/
+uavionics_dip_bringup/config/camera_calib/
 
 devel/
 logs/

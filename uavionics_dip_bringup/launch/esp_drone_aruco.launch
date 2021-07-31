@@ -3,7 +3,7 @@
   
   <!-- Configurations -->
   <arg name="drone_name" default="esp_drone"/>
-  <arg name="camera_info_file" default="$(find uavionics_dip_bringup)/config/camera_calib/ost.yaml"/>
+  <arg name="camera_info_file" default="$(find uavionics_dip_bringup)/config/camera_calib/ost_640x480.yaml"/>
   <arg name="drone_ip_addr" default="192.168.0.113"/>
   <arg name="aruco_marker_size" default="0.16"/>
   <arg name="aruco_map_config_file" default="$(find uavionics_dip_bringup)/config/aruco_maps/hall_map.yml"/>

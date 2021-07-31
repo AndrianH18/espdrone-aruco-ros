@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="map_frame" default="aruco"/>
+  <arg name="map_frame" default="map"/>
   <arg name="marker_size" default="0.2"/>
   <arg name="map_config" default="$(find aruco_ros)/maps/map.yml"/>
   <arg name="camera_name" default="camera"/>

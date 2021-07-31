@@ -168,8 +168,7 @@ public:
                                               mapPoseTracker.getTvec(),
                                               mapConfig[0].getMarkerSize() * 2);
 
-          tf2::Transform
-            transform = aruco_ros::arucoMarkerMap2Tf(mapPoseTracker, rotate_marker_axis_);
+          tf2::Transform transform = aruco_ros::arucoMarkerMap2Tf(mapPoseTracker, rotate_marker_axis_);
 
           geometry_msgs::TransformStamped stampedTransform;
           stampedTransform.header.stamp = curr_stamp;
@@ -183,14 +182,18 @@ public:
           //publish for easier debugging
           transform_pub.publish(stampedTransform);
 
-          geometry_msgs::PoseStamped poseMsg;
-          tf2::convert(stampedTransform, poseMsg);
-          pose_pub.publish(poseMsg);
+          // Publish the camera's pose and position with respect to the map frame, in this case the transform map_frame -> camera_frame.
+          if (_tfBuffer.canTransform(map_frame, camera_frame, ros::Time(0))) {
+            geometry_msgs::PoseStamped poseMsg;
+            stampedTransform = _tfBuffer.lookupTransform(map_frame, camera_frame, ros::Time(0));
+            tf2::convert(stampedTransform, poseMsg);
+            pose_pub.publish(poseMsg);
 
-          geometry_msgs::Vector3Stamped positionMsg;
-          positionMsg.header = stampedTransform.header;
-          positionMsg.vector = stampedTransform.transform.translation;
-          position_pub.publish(positionMsg);
+            geometry_msgs::Vector3Stamped positionMsg;
+            positionMsg.header = stampedTransform.header;
+            positionMsg.vector = stampedTransform.transform.translation;
+            position_pub.publish(positionMsg);
+          }
         }
       }
 

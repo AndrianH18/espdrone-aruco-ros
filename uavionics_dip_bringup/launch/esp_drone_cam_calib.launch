@@ -15,7 +15,7 @@
   
   3.Try to get all bars to show green (to obtain enough data), then click "Calibrate" on the calibration window.
   
-  4.After the calibration is complete, click "Save" on the calibration window to write the camera calibration data to a YML file (zipped).
+  4.After the calibration is complete, click "Save" on the calibration window to write the camera calibration data to a YAML file (zipped).
     The full path to the saved calibration data is /tmp/calibrationdata.tar.gz.
   
   5.Unzip the saved file, then copy the calibration file to the 'uavionics_dip_bringup' folder/ROS package. In the terminal:
@@ -24,15 +24,15 @@
       cd /tmp
       tar -xvf calibrationdata.tar.gz
 
-      # Copy the YML file to 'uavionics_dip_bringup' (assuming your Catkin workspace is named 'catkin_ws')...
-      cp ost.yml ~/catkin_ws/src/uavionics_dip/uavionics_dip_bringup/config/camera_calib/
+      # Copy the YAML file to 'uavionics_dip_bringup' (assuming your Catkin workspace is named 'catkin_ws')...
+      cp ost.yaml ~/catkin_ws/src/uavionics-dip-ros/uavionics_dip_bringup/config/camera_calib/
 
   -->
   
   <!-- Configurations -->
   <arg name="drone_name" default="esp_drone"/>
   <arg name="drone_ip_addr" default="192.168.0.113"/>
-  <arg name="checkerboard_size" default="9x7"/>
+  <arg name="checkerboard_size" default="7x9"/>
   <arg name="checkerboard_square_size" default="0.02"/>
 
   <!-- Drone camera publisher node -->
