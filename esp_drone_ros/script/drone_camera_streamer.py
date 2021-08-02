@@ -4,7 +4,6 @@ import cv2
 import numpy as np
 # from urllib2 import urlopen
 from urllib.request import urlopen
-import sys
 import rospy
 import cv2
 from sensor_msgs.msg import Image, CameraInfo
@@ -15,18 +14,18 @@ import yaml
 CAMERA_BUFFER_SIZE=4096
 bts=b''
 
-rospy.init_node('drone_camera_pub', anonymous=True)
-drone_name = rospy.get_param('~drone_name', default="esp_drone")
+rospy.init_node('camera_streamer', anonymous=True)
+drone_name = rospy.get_namespace().split('/')[-2]
 drone_ip_addr = rospy.get_param('~drone_ip_addr', default="192.168.43.42")
 
-camera_img_pub = rospy.Publisher(f"/{drone_name}/camera_stream", Image, queue_size=1)
+camera_img_pub = rospy.Publisher("camera_stream", Image, queue_size=1)
 
 try:
     drone_camera_info_file = rospy.get_param('~drone_camera_info_file')
     camera_info_is_available = True
-    camera_info_pub = rospy.Publisher(f"/{drone_name}/camera_info", CameraInfo, queue_size=1)
+    camera_info_pub = rospy.Publisher("camera_info", CameraInfo, queue_size=1)
 except KeyError:
-    rospy.logwarn("Camera calibration file not specified in 'drone_camera_info_file' param, will not publish camera_info")
+    rospy.logwarn(f"[{drone_name}] Camera calibration file not specified in 'drone_camera_info_file' param, will not publish camera_info")
     camera_info_is_available = False
 
 stream = urlopen(f"http://{drone_ip_addr}/stream.jpg")
@@ -34,7 +33,7 @@ bridge = CvBridge()
 
 # Load camera calibration info if it is available
 if camera_info_is_available:
-    with open(drone_camera_info_file) as camera_info:
+    with open(drone_camera_info_file, 'r') as camera_info:
         drone_camera_info = yaml.safe_load(camera_info)
     camera_info_msg = CameraInfo(height            = drone_camera_info['image_height'],
                                 width              = drone_camera_info['image_width'],
@@ -45,7 +44,7 @@ if camera_info_is_available:
                                 P                  = drone_camera_info['projection_matrix']['data'])
     camera_info_msg.header.frame_id = drone_name 
 
-rospy.loginfo("Starting camera stream")
+rospy.loginfo(f"[{drone_name}] Starting camera stream")
 while (not rospy.is_shutdown()):    
     try:
         bts+=stream.read(CAMERA_BUFFER_SIZE)
@@ -67,7 +66,7 @@ while (not rospy.is_shutdown()):
                 camera_info_pub.publish(camera_info_msg)
     
     except Exception as e:
-        rospy.logerr(str(e))
+        rospy.logerr(f"[{drone_name}] " + str(e))
         bts=b''
         stream = urlopen(f"http://{drone_ip_addr}/stream.jpg")
         continue

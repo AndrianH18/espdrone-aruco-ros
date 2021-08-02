@@ -1,35 +1,35 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="marker_map_frame" default="aruco_map"/>
-  <arg name="world_fixed_frame" default="map"/>
-  <arg name="world_to_marker_map_tf" default="0 0 0 0 0 0 1"/>
   <arg name="marker_size" default="0.2"/>
   <arg name="map_config" default="$(find aruco_ros)/maps/map.yml"/>
   <arg name="camera_name" default="camera"/>
+  <arg name="marker_map_frame" default="aruco_map"/>
+  <arg name="world_fixed_frame" default="map"/>
   <arg name="visualize" default="true"/>
 
-  <node pkg="aruco_ros" type="map_single" name="aruco_node" output="screen">
-    <remap from="/camera_info" to="/$(arg camera_name)/camera_info"/>
-    <remap from="/image" to="/$(arg camera_name)/image_rect_color"/>
-    <param name="map_config" type="string" value="$(arg map_config)"/>
-    <param name="marker_size" type="double" value="$(arg marker_size)"/>
-    <param name="draw_markers" type="bool" value="true"/>
-    <param name="draw_markers_cube" type="bool" value="false"/>
-    <param name="draw_markers_axis" type="bool" value="true"/>
-    <param name="draw_map_axis" type="bool" value="true"/>
-    <param name="image_is_rectified" value="true"/>
-    <param name="camera_frame" value="$(arg camera_name)"/>
-    <param name="marker_map_frame" type="string" value="$(arg marker_map_frame)"/>
-    <param name="world_fixed_frame" type="string" value="$(arg world_fixed_frame)"/>
-    <param name="corner_refinement" value="CORNER_SUBPIX"/>
-    <param name="publish_tf" value="true"/>
-  </node>
+  <group ns="/$(arg camera_name)">
 
-  <!-- Static transform from world frame to aruco marker map frame (required) -->
-  <node pkg="tf" type="static_transform_publisher" name="world_to_marker_static_tf" args="$(arg world_to_marker_map_tf) $(arg world_fixed_frame) $(arg marker_map_frame) 50" />
+    <node pkg="aruco_ros" type="map_single" name="aruco_map_pose_tracker" output="screen">
+      <remap from="/camera_info" to="camera_info"/>
+      <remap from="/image" to="image_rect_color"/>
+      <param name="map_config" type="string" value="$(arg map_config)"/>
+      <param name="marker_size" type="double" value="$(arg marker_size)"/>
+      <param name="draw_markers" type="bool" value="true"/>
+      <param name="draw_markers_cube" type="bool" value="false"/>
+      <param name="draw_markers_axis" type="bool" value="true"/>
+      <param name="draw_map_axis" type="bool" value="true"/>
+      <param name="image_is_rectified" value="true"/>
+      <param name="camera_frame" value="$(arg camera_name)"/>
+      <param name="marker_map_frame" type="string" value="$(arg marker_map_frame)"/>
+      <param name="world_fixed_frame" type="string" value="$(arg world_fixed_frame)"/>
+      <param name="corner_refinement" value="CORNER_SUBPIX"/>
+      <param name="publish_tf" value="true"/>
+    </node>
 
-  <!-- Visualization -->
-  <node pkg="image_view" type="image_view" name="image_view" if="$(arg visualize)">
-    <remap from="image" to="aruco_node/result"/>
-  </node>
+    <!-- Visualization -->
+    <node pkg="image_view" type="image_view" name="image_view" if="$(arg visualize)">
+      <remap from="image" to="aruco_map_pose_tracker/result"/>
+    </node>
+
+  </group>
 </launch>

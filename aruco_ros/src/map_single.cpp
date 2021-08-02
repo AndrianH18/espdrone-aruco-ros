@@ -26,6 +26,8 @@
 #include <dynamic_reconfigure/server.h>
 #include <aruco_ros/ArucoThresholdConfig.h>
 
+#define LOG_NAME "aruco_map_pose_tracker"
+
 using namespace aruco;
 using namespace std;
 
@@ -92,8 +94,8 @@ public:
     mParams.getCornerRefinementMethodFromString(refinementMethod);
     mParams.detectEnclosedMarkers(use_enclosed);
 
-    ROS_INFO_STREAM("Corner refinement method: " << mParams.cornerRefinementM);
-    ROS_INFO_STREAM("Threshold method: " << mParams.thresMethod);
+    ROS_INFO_STREAM("[" << LOG_NAME << "] Corner refinement method: " << mParams.cornerRefinementM);
+    ROS_INFO_STREAM("[" << LOG_NAME << "] Threshold method: " << mParams.thresMethod);
 
     mDetector.setParameters(mParams);
 
@@ -122,7 +124,7 @@ public:
     try {
       mapConfig.readFromFile(map_config_file);
     } catch (std::exception & exp) {
-      ROS_ERROR("Could not read '%s'", map_config_file.c_str());
+      ROS_ERROR("[%s] Could not read '%s'", LOG_NAME, map_config_file.c_str());
       exit(1);
     }
 
@@ -130,10 +132,10 @@ public:
 
     ROS_ASSERT(!camera_frame.empty() && !marker_map_frame.empty() && !world_fixed_frame.empty());
 
-    ROS_INFO("Aruco node started with marker size of %f m and marker map to track: %s",
-             marker_size, map_config_file.c_str());
-    ROS_INFO("Aruco node will publish camera TF with %s as parent and %s as child.",
-             marker_map_frame.c_str(), camera_frame.c_str());
+    ROS_INFO("[%s] Started with marker size of %f m and marker map to track: %s",
+             LOG_NAME, marker_size, map_config_file.c_str());
+    ROS_INFO("[%s] Will publish camera TF with '%s' as parent and '%s' as child",
+             LOG_NAME, marker_map_frame.c_str(), camera_frame.c_str());
 
     dyn_rec_server.setCallback(boost::bind(&ArucoMap::reconf_callback, this, _1, _2));
   }
@@ -145,7 +147,7 @@ public:
       (pose_pub.getNumSubscribers() == 0) &&
       (transform_pub.getNumSubscribers() == 0) &&
       (position_pub.getNumSubscribers() == 0)) {
-      ROS_DEBUG("No subscribers, not looking for aruco markers");
+      ROS_DEBUG("[%s] No subscribers, not looking for aruco markers", LOG_NAME);
       return;
     }
 
@@ -235,7 +237,7 @@ public:
         debug_pub.publish(debug_msg.toImageMsg());
       }
     } catch (cv_bridge::Exception & e) {
-      ROS_ERROR("cv_bridge exception: %s", e.what());
+      ROS_ERROR("[%s] cv_bridge exception: %s", LOG_NAME, e.what());
       return;
     }
   }
@@ -247,12 +249,12 @@ public:
     mapPoseTracker.setParams(camParam, mapConfig);
     cam_info_received = true;
     cam_info_sub.shutdown();
-    ROS_INFO("Received camera info");
+    ROS_INFO("[%s] Received camera info", LOG_NAME);
   }
 
   void reconf_callback(aruco_ros::ArucoThresholdConfig & config, uint32_t level)
   {
-    ROS_INFO("In dynamic reconfigure callback");
+    ROS_INFO("[%s] In dynamic reconfigure callback", LOG_NAME);
     mParams.setCornerRefinementMethod(static_cast<aruco::CornerRefinementMethod>(config.corner_refinement_method));
     mParams.setDetectionMode(static_cast<aruco::DetectionMode>(config.detection_mode),
                              config.min_marker_size);
