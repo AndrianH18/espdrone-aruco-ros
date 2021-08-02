@@ -37,7 +37,8 @@ private:
   aruco::MarkerDetector::Params mParams;
 
   std::string camera_frame;
-  std::string map_frame;
+  std::string marker_map_frame;
+  std::string world_fixed_frame;
 
   bool useRectifiedImages;
   bool draw_markers_;
@@ -107,8 +108,9 @@ public:
 
     nh.param<double>("marker_size", marker_size, 0.05);
     nh.param<std::string>("map_config", map_config_file, "board.yml");
-    nh.param<std::string>("map_frame", map_frame, "marker_map");
+    nh.param<std::string>("marker_map_frame", marker_map_frame, "aruco_marker_map");
     nh.param<std::string>("camera_frame", camera_frame, "");
+    nh.param<std::string>("world_fixed_frame", world_fixed_frame, "map");
     nh.param<bool>("image_is_rectified", useRectifiedImages, true);
     nh.param<bool>("draw_markers", draw_markers_, false);
     nh.param<bool>("draw_markers_cube", draw_markers_cube_, false);
@@ -126,12 +128,12 @@ public:
 
     mDetector.setDictionary(mapConfig.getDictionary());
 
-    ROS_ASSERT(!camera_frame.empty() && !map_frame.empty());
+    ROS_ASSERT(!camera_frame.empty() && !marker_map_frame.empty() && !world_fixed_frame.empty());
 
     ROS_INFO("Aruco node started with marker size of %f m and marker map to track: %s",
              marker_size, map_config_file.c_str());
-    ROS_INFO("Aruco node will publish pose to TF with %s as parent and %s as child.",
-             camera_frame.c_str(), map_frame.c_str());
+    ROS_INFO("Aruco node will publish camera TF with %s as parent and %s as child.",
+             marker_map_frame.c_str(), camera_frame.c_str());
 
     dyn_rec_server.setCallback(boost::bind(&ArucoMap::reconf_callback, this, _1, _2));
   }
@@ -168,24 +170,27 @@ public:
                                               mapPoseTracker.getTvec(),
                                               mapConfig[0].getMarkerSize() * 2);
 
-          tf2::Transform transform = aruco_ros::arucoMarkerMap2Tf(mapPoseTracker, rotate_marker_axis_);
+          tf2::Transform transform = aruco_ros::arucoMarkerMap2Tf(mapPoseTracker, rotate_marker_axis_);  // Get transform from camera frame to marker map frame.
+          transform = transform.inverse();  // We need the transform from marker map frame to camera frame, not vice versa.
 
           geometry_msgs::TransformStamped stampedTransform;
           stampedTransform.header.stamp = curr_stamp;
-          stampedTransform.header.frame_id = camera_frame;
-          stampedTransform.child_frame_id = map_frame;
+          stampedTransform.header.frame_id = marker_map_frame;
+          stampedTransform.child_frame_id = camera_frame;
           stampedTransform.transform = tf2::toMsg(transform);
 
-          if (publish_tf_)
+          if (publish_tf_) {
             br.sendTransform(stampedTransform);
 
-          //publish for easier debugging
-          transform_pub.publish(stampedTransform);
+            //publish for easier debugging
+            transform_pub.publish(stampedTransform);
+          }
 
-          // Publish the camera's pose and position with respect to the map frame, in this case the transform map_frame -> camera_frame.
-          if (_tfBuffer.canTransform(map_frame, camera_frame, ros::Time(0))) {
+          // Publish the camera's pose and position with respect to the world fixed frame. The (static) transform from the world fixed frame to marker map frame
+          // is expected to be available (e.g. from static tf publisher launched from map.launch).
+          if (_tfBuffer.canTransform(world_fixed_frame, camera_frame, ros::Time(0))) {
             geometry_msgs::PoseStamped poseMsg;
-            stampedTransform = _tfBuffer.lookupTransform(map_frame, camera_frame, ros::Time(0));
+            stampedTransform = _tfBuffer.lookupTransform(world_fixed_frame, camera_frame, ros::Time(0));
             tf2::convert(stampedTransform, poseMsg);
             pose_pub.publish(poseMsg);
 

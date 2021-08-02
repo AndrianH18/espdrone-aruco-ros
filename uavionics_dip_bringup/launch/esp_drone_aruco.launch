@@ -3,22 +3,22 @@
   
   <!-- Configurations -->
   <arg name="drone_name" default="esp_drone"/>
+  <arg name="drone_ip_addr" default="192.168.0.112"/>
   <arg name="camera_info_file" default="$(find uavionics_dip_bringup)/config/camera_calib/ost_640x480.yaml"/>
-  <arg name="drone_ip_addr" default="192.168.0.113"/>
   <arg name="aruco_marker_size" default="0.16"/>
   <arg name="aruco_map_config_file" default="$(find uavionics_dip_bringup)/config/aruco_maps/hall_map.yml"/>
-  <arg name="publish_tf" default="true"/>
+  <arg name="world_to_marker_map_tf" default="0 0 0 0.5 -0.5 -0.5 0.5"/>
   <arg name="visualize_output" default="true"/>
-
+  
   <!-- Drone camera publisher nodes -->
   <node pkg="esp_drone_ros" type="drone_camera_streamer.py" name="drone_camera_streamer" output="screen">
-    <param name="drone_name" type="string" value="$(arg drone_name)" />
+    <param name="drone_name" type="string" value="$(arg drone_name)"/>
     <param name="drone_camera_info_file" type="string" value="$(arg camera_info_file)"/>
     <param name="drone_ip_addr" type="string" value="$(arg drone_ip_addr)"/>
   </node>
 
   <node pkg="esp_drone_ros" type="image_transport_republisher" name="image_transport_republisher" output="screen">
-    <param name="drone_name" type="string" value="$(arg drone_name)" />
+    <param name="drone_name" type="string" value="$(arg drone_name)"/>
   </node>
 
   <!-- Drone camera undistortion -->
@@ -28,11 +28,11 @@
 
   <!-- ArUco mapping launch -->
   <include file="$(find aruco_ros)/launch/map.launch">
-    <arg name="camera_name" value="$(arg drone_name)" />
-    <arg name="marker_size" value="$(arg aruco_marker_size)" />
-    <arg name="map_config" value="$(arg aruco_map_config_file)" />
-    <arg name="publish_tf" value="$(arg publish_tf)"/>
+    <arg name="camera_name" value="$(arg drone_name)"/>
+    <arg name="marker_size" value="$(arg aruco_marker_size)"/>
+    <arg name="map_config" value="$(arg aruco_map_config_file)"/>
     <arg name="visualize" value="$(arg visualize_output)"/>
+    <arg name="world_to_marker_map_tf" value="$(arg world_to_marker_map_tf)"/>
   </include>
 
 </launch>
