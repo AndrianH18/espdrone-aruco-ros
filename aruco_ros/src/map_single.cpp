@@ -106,7 +106,7 @@ public:
     debug_pub = it.advertise("debug", 1);
     pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pose", 100);
     transform_pub = nh.advertise<geometry_msgs::TransformStamped>("transform", 100);
-    position_pub = nh.advertise<geometry_msgs::PointStamped>("/espdrone_106/external_position", 100);
+    position_pub = nh.advertise<geometry_msgs::PointStamped>("position", 100);
 
     nh.param<double>("marker_size", marker_size, 0.05);
     nh.param<std::string>("map_config", map_config_file, "board.yml");
