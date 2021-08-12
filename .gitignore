@@ -1,5 +1,5 @@
 .vscode/
-uavionics_dip_bringup/config/esp_drone/camera_calib/
+espdrone_aruco_bringup/config/
 
 devel/
 logs/
