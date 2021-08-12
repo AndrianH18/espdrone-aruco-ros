@@ -106,7 +106,7 @@ public:
     debug_pub = it.advertise("debug", 1);
     pose_pub = nh.advertise<geometry_msgs::PoseStamped>("pose", 100);
     transform_pub = nh.advertise<geometry_msgs::TransformStamped>("transform", 100);
-    position_pub = nh.advertise<geometry_msgs::Vector3Stamped>("position", 100);
+    position_pub = nh.advertise<geometry_msgs::PointStamped>("/espdrone_106/external_position", 100);
 
     nh.param<double>("marker_size", marker_size, 0.05);
     nh.param<std::string>("map_config", map_config_file, "board.yml");
@@ -196,9 +196,11 @@ public:
             tf2::convert(stampedTransform, poseMsg);
             pose_pub.publish(poseMsg);
 
-            geometry_msgs::Vector3Stamped positionMsg;
+            geometry_msgs::PointStamped positionMsg;
             positionMsg.header = stampedTransform.header;
-            positionMsg.vector = stampedTransform.transform.translation;
+            positionMsg.point.x = stampedTransform.transform.translation.x;
+            positionMsg.point.y = stampedTransform.transform.translation.y;
+            positionMsg.point.z = stampedTransform.transform.translation.z;
             position_pub.publish(positionMsg);
           }
         }

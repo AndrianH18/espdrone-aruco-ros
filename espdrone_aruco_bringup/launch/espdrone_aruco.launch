@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <!-- Configurations -->
+  <arg name="drone_name" default="espdrone"/>
+  <arg name="drone_ip_addr" default="192.168.43.42"/>
+  <arg name="camera_info_file" default="$(find espdrone_aruco_bringup)/config/espdrone/camera_calib/ost.yaml"/>
+  <arg name="visualize_output" default="true"/>
+  <arg name="aruco_marker_size" default="0.16"/>
+  <arg name="aruco_map_config_file" default="$(find espdrone_aruco_bringup)/config/environment/aruco_maps/hall_map.yml"/>
+  <arg name="marker_map_frame" default="aruco_map"/>
+  <arg name="world_fixed_frame" default="map"/>
+  
+  <!-- ESP-drone add service -->
+  <include file="$(find espdrone_driver)/launch/espdrone_add.launch">
+    <arg name="uri" value="$(arg drone_ip_addr)" />
+    <arg name="tf_prefix" value="$(arg drone_name)" />
+    <arg name="roll_trim" value="0" />
+    <arg name="pitch_trim" value="0" />
+    <arg name="enable_logging" value="True" />
+    <arg name="enable_parameters" value="True" />
+    <arg name="use_ros_time" value="True" />
+    <arg name="enable_logging_image" value="True" />
+    <arg name="enable_logging_imu" value="True" />
+    <arg name="enable_logging_battery" value="True" />
+    <arg name="enable_logging_motor" value="True" />
+    <arg name="enable_logging_zranger" value="False" />
+    <arg name="enable_logging_pose" value="True" />
+    <arg name="enable_pose_tf_publisher" value="False" />
+    <arg name="enable_logging_setpoint" value="True" />
+    <arg name="camera_info_file" value="$(arg camera_info_file)" />
+    <arg name="custom_log_file" value="$(find espdrone_driver)/config/log.yaml"/>
+  </include>
+  
+  <group ns="/$(arg drone_name)">
+
+    <!-- Republish camera stream topic published by 'espdrone_server' using image_transport, needed for image_proc -->
+    <node pkg="espdrone_utils" type="image_transport_republisher" name="image_transport_republisher" output="screen"/>
+
+    <!-- Camera undistortion -->
+    <node pkg="image_proc" type="image_proc" name="image_proc" output="screen"/>
+
+  </group>
+
+  <!-- ArUco mapping -->
+  <include file="$(find aruco_ros)/launch/map.launch">
+    <arg name="camera_name" value="$(arg drone_name)"/>
+    <arg name="marker_size" value="$(arg aruco_marker_size)"/>
+    <arg name="map_config" value="$(arg aruco_map_config_file)"/>
+    <arg name="visualize" value="$(arg visualize_output)"/>
+    <arg name="marker_map_frame" value="$(arg marker_map_frame)"/>
+    <arg name="world_fixed_frame" value="$(arg world_fixed_frame)"/>
+  </include>
+
+</launch>

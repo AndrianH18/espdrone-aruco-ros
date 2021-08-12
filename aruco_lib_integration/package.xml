@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>aruco_lib_integration</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The aruco_lib_integration package</description>
-  <maintainer email="ubuntu@todo.todo">ubuntu</maintainer>
+
+  <maintainer email="andrianhuang@yahoo.com">Andrian Huang</maintainer>
 
   <license>TODO</license>
 

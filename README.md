@@ -1,12 +1,11 @@
-# uavionics-dip-ros
-This reposiroty contains ROS packages for ESP-drone camera data processing for the NTU EEE UAVIONICS DIP project.
+# espdrone-aruco-ros
+This reposiroty contains ROS packages for ESP-drone camera data processing for ArUco marker detection for the NTU EEE UAVIONICS DIP project.
 
 The packages here (as well as `aruco-3.1.12` and `librealsense`, the two required dependencies not in this repository) have been tested on **Ubuntu 20.04 and ROS Noetic**.
 
 
 ## Overview
 The packages in this repository allow for **processing the camera data from multiple ESP-drones concurrently**, specifically to:
-* Obtain the camera stream from HTTP
 * Process the camera image using ROS `image_proc`, e.g. for camera undistortion
 * Perform pose estimation (position and orientation) of the camera/drone using multiple [ArUco](https://www.uco.es/investiga/grupos/ava/node/26) fiducial markers scattered across the drone's environment, forming a [marker map](http://www.uco.es/investiga/grupos/ava/node/57)
 
@@ -16,8 +15,21 @@ The stack has been tested to run on a Raspberry Pi 4B (8GB model) running Ubuntu
 
 
 ## Setup
+The steps here assume that you already have ROS and Catkin workspace setup. If you have not done so, check out how to install ROS in the [official Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu), then run these to create a Catkin workspace:
+```bash
+source /opt/ros/noetic/setup.bash
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws
+catkin build
+
+# Automatically source setup.bash for convenience.
+echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+If you already have ROS and Catkin workspace setup:
 1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in your home directory (i.e. `/home/<your_username>/`). 
-2. Setup the `librealsense` library required by the `realsense_camera` package *(skip this step if you do not require testing with Intel Realsense cameras)*:
+2. Setup the `librealsense` library required by the `realsense_camera` package.  
+   ***Note:** skip this step if you do not require testing with Intel Realsense cameras).*
     * Fetch the library [from GitHub](https://github.com/IntelRealSense/librealsense/tree/legacy):
       ```bash
       cd ~
@@ -45,11 +57,15 @@ The stack has been tested to run on a Raspberry Pi 4B (8GB model) running Ubuntu
       sudo cp config/99-realsense-libusb.rules /etc/udev/rules.d/
       sudo udevadm control --reload-rules && udevadm trigger
       ```
-3. Clone this repository to your Catkin workspace's `src` folder.
-   *Note: remove `realsense_camera` from inside `uavionics-dip-ros` if you did not install `librealsense` or do not require testing with Realsense cameras.*
+    * Install ROS `rgbd_launch` required by `realsense_camera`:
+      ```bash
+      sudo apt install ros-noetic-rgbd-launch
+      ```
+3. Clone this repository to your Catkin workspace's `src` folder.  
+   ***Note**: remove `realsense_camera` from inside `espdrone-aruco-ros` if you did not install `librealsense` or do not require testing with Realsense cameras.*
    ```bash
    cd ~/catkin_ws/src
-   git clone https://github.com/AndrianH18/uavionics-dip-ros.git
+   git clone https://github.com/AndrianH18/espdrone-aruco-ros.git
    ```
 4. Build the workspace:
    ```bash
@@ -68,6 +84,8 @@ Here are the steps to perform (in order):
 4. Launching the drones
 
 See the following for more in-depth guides.
+
+***Note for DIP students:** steps 1 and 2 might have already been done for you. Please consult us to verify this.*
 
 ### 1. Preparing the Room (Environment)
 
@@ -89,26 +107,26 @@ An ArUco map file is required to be able to estimate the drones' pose. This file
 
 We recommend using the [ArUco MarkerMapper app](https://play.google.com/store/apps/details?id=com.uco.avaappbeta&hl=en_SG&gl=US) (only available for Android) as the phone has built-in camera and the app is quite easy to use. Alternatively, the program is also available for Linux and Windows [here](https://sourceforge.net/projects/markermapper/files/?source=navbar). Refer to the [official webpage](http://www.uco.es/investiga/grupos/ava/node/57/) for guide on how to use the Linux/Windows program.
 
-The app/program will output a YML file as the map. **Copy this file to `uavionics-dip-ros/uavionics_dip_bringup/config/environment/aruco_maps`**. 
+The app/program will output a YML file as the map. **Copy this file to `espdrone-aruco-ros/espdrone_aruco_bringup/config/environment/aruco_maps`**. 
 
 ### 3. Calibrating the Drone's Camera
 Since we rely on vision markers for localization, it is important to calibrate the camera of the drone (especially for wide-angle lenses). Perform the following steps **for each drone (camera)**:
-1. Prepare a camera calibration checkerboard, such as [this one](https://github.com/AndrianH18/uavionics-dip-ros/blob/main/documentation/checkerboard_7x9_20mm.pdf). Make sure to **print it on an A4 paper with 100% scale (no zooming)**. Then, turn on the ESP-drone and make sure that the drone and your computer are connected to the same Wifi network.
+1. Prepare a camera calibration checkerboard, such as [this one](https://github.com/AndrianH18/espdrone-aruco-ros/blob/main/documentation/checkerboard_7x9_20mm.pdf). Make sure to **print it on an A4 paper with 100% scale (no zooming)**. Then, turn on the ESP-drone and make sure that the drone and your computer are connected to the same Wifi network.
 2. Launch the following launch file for camera calibration, **specifying the IP address of the drone** and the checkerboard size and square size (in meters):
    ```bash
-   roslaunch uavionics_dip_bringup esp_drone_cam_calib.launch drone_ip_addr:=192.168.0.112 checkerboard:=7x9 square_size:=0.02
+   roslaunch espdrone_aruco_bringup espdrone_cam_calib.launch drone_ip_addr:=192.168.0.112 checkerboard:=7x9 square_size:=0.02
    ```
    A calibration window showing the camera feed from the drone should then appear. A warning on the terminal saying "Camera calibration file not specified" is normal.
 3. Try to get all bars on the calibration window to show green and be long enough, then click "Calibrate". The calculation can take some time. *It is okay to switch the drone off.*
 4. After the calibration is complete, click "Save" on the calibration window. The full path to the saved calibration data is `/tmp/calibrationdata.tar.gz`. After the terminal reports that the calibration data has been saved, you may shut down the ROS (`Ctrl` + `C` on the terminal).
-5. Unzip the saved file, then copy and rename the calibration file to the `uavionics_dip_bringup` folder **(replace `<new_file_name>` below with a sensible name, so you can identify which drone the camera is attached to)**:
+5. Unzip the saved file, then copy and rename the calibration file to the `espdrone_aruco_bringup` folder. **Replace `<new_file_name>` below with a sensible name, so you can identify which drone the camera is attached to.**
    ```bash
    # Unzip the calibration data...
    cd /tmp
    tar -xvf calibrationdata.tar.gz
 
-   # Copy the file to 'uavionics_dip_bringup' and rename it...
-   cd ~/catkin_ws/src/uavionics-dip-ros/uavionics_dip_bringup/config/esp_drone/camera_calib/
+   # Copy the file to 'espdrone_aruco_bringup' and rename it...
+   cd ~/catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/config/espdrone/camera_calib/
    cp /tmp/ost.yaml ./<new_file_name>.yaml
    ```
 
@@ -118,7 +136,7 @@ You can launch multiple ESP-drones at once in the same envinronment. Before doin
     * Describes the drone's IP address, whether you want to visualize the camera stream, and which calibration file is used (**make sure to use the correct file for the camera attached to the drone!**).
     * **Each drone has their own configuration file**.
     * The title of the configuration file determines the drone's name.
-    * File location: `uavionics_dip_bringup/config/esp_drone`.
+    * File location: `espdrone_aruco_bringup/config/espdrone`.
     * Example:  
       A file titled `espdrone1.yaml` with the following content:
       ```yaml
@@ -127,35 +145,35 @@ You can launch multiple ESP-drones at once in the same envinronment. Before doin
       visualize_output: "true"                    # see camera stream with detected markers drawn? 
       ```
 2. **Environment/Map Configuration File**
-    * Describes the ArUco marker size, the map file to use, parameters related to ROS TF library (you do not have to modify this).
+    * Describes the ArUco marker size, the map file to use, parameters related to ROS TF library (you shouldn't have to modify this).
     * Only one file needed for each environment.
     * File title has no effect; it is only for identifying which environment the configuration file describes. 
-    * File location: `uavionics_dip_bringup/config/environment`.
+    * File location: `espdrone_aruco_bringup/config/environment`.
     * Example:  
       A file titled `iot_lab.yaml` with the following content:
       ```yaml
-      aruco_marker_size     : 0.16                # size in meters
-      aruco_map_config_file : "iot_lab_map.yml"   # which map file to use
-      world_to_marker_map_tf: "0 0 0 0.5 -0.5 -0.5 0.5"
-      marker_map_frame      : "aruco_map"
-      world_fixed_frame     : "map"
+      aruco_marker_size     : 0.16                        # size in meters
+      aruco_map_config_file : "iot_lab_map.yml"           # which map file to use
+      world_to_marker_map_tf: "0 0 0 0.5 -0.5 -0.5 0.5"   # world to marker map static TF
+      marker_map_frame      : "aruco_map"                 # marker map frame ID
+      world_fixed_frame     : "map"                       # world fixed frame ID
       ```
 
-After the configuration files have been setup, the drones can be launched by using the `launch_esp_drones.py` Python script inside the `uavionics_dip_bringup` package, specifying the drone(s) to launch and the environment.
+After the configuration files have been setup, the drones can be launched by using the `launch_espdrones.py` Python script inside the `espdrone_aruco_bringup` package, specifying the drone(s) to launch and the environment.
 
 **Example:** to launch `espdrone1` and `espdrone2` described by `espdrone1.yaml` and `espdrone2.yaml`, in the IoT Lab environment described by `iot_lab.yaml`...
 ```bash
-cd ~/catkin_ws/src/uavionics-dip-ros/uavionics_dip_bringup/script
-python3 launch_esp_drones.py -d espdrone1 espdrone2 -e iot_lab
+cd ~/catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/script
+python3 launch_espdrone_aruco.py -d espdrone1 espdrone2 -e iot_lab
 
 # or alternatively
 
-python3 launch_esp_drones.py --drones espdrone1 espdrone2 --env iot_lab
+python3 launch_espdrone_aruco.py --drones espdrone1 espdrone2 --env iot_lab
 ```
 
 A window showing the camera stream and ArUco markers detected will appear for each drone. The result of the pose estimation can be obtained from the ROS topic `/<drone_name>/aruco_map_pose_tracker/pose`.
 
-In another terminal...
+In another terminal:
 ```bash
 rostopic echo /<drone_name>/aruco_map_pose_tracker/pose
 ```
@@ -164,10 +182,10 @@ rostopic echo /<drone_name>/aruco_map_pose_tracker/pose
 If you built both `realsense_camera` and `librealsense`, it is possible to use the Realsense (R200) camera instead of the drone's camera (e.g. for testing only). In this case, the `pose` topic published by `aruco_map_pose_tracker` is the pose of the Realsense camera with respect to the `map` frame.
 
 ```bash
-roslaunch uavionics_dip_bringup realsense_r200_aruco.launch
+roslaunch espdrone_aruco_bringup realsense_r200_aruco.launch
 ```
 
-Refer to `realsense_r200_aruco.launch` inside `uavionics_dip_bringup/launch` for modifiable configurations (e.g. ArUco marker size and map config file). 
+Refer to `realsense_r200_aruco.launch` inside `espdrone_aruco_bringup/launch` for modifiable configurations (e.g. ArUco marker size and map config file). 
 
 
 ## Notes Regarding ROS Implementation

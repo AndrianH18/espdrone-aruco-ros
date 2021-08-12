@@ -4,7 +4,7 @@
   <!-- Configurations -->
   <arg name="camera" default="camera/rgb"/>
   <arg name="aruco_marker_size" default="0.16"/>
-  <arg name="aruco_map_config_file" default="$(find uavionics_dip_bringup)/config/environment/aruco_maps/hall_map.yml"/>
+  <arg name="aruco_map_config_file" default="$(find espdrone_aruco_bringup)/config/environment/aruco_maps/hall_map.yml"/>
   <arg name="world_to_marker_map_tf" default="0 0 0 0.5 -0.5 -0.5 0.5"/>
   <arg name="visualize_output" default="true"/>
 

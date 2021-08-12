@@ -1,5 +1,0 @@
-# drone_name is determined from the title of this YAML file
-
-drone_ip_addr   : "192.168.0.112"
-camera_info_file: "espdrone1_640x480.yaml"
-visualize_output: "true"

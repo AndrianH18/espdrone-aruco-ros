@@ -5,6 +5,8 @@
   <description>
     The ARUCO Library has been developed by the Ava group of the Univeristy of Cordoba(Spain).
     It provides real-time marker based 3D pose estimation using AR markers.
+
+    This package has been modified for EEE DIP UAVIONICS project.
   </description>
   <maintainer email="bence.magyar.robotics@gmail.com">Bence Magyar</maintainer>
   <license>BSD</license>

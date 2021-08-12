@@ -4,13 +4,13 @@
   <!-- For notes on how to perform camera calibration, please refer to README.md -->
   
   <!-- Configurations -->
-  <arg name="drone_name" default="esp_drone"/>
+  <arg name="drone_name" default="espdrone"/>
   <arg name="drone_ip_addr" default="192.168.43.42"/>
   <arg name="checkerboard" default="7x9"/>
   <arg name="square_size" default="0.02"/>
 
   <!-- Camera streamer node -->
-  <node pkg="esp_drone_ros" type="drone_camera_streamer.py" name="camera_streamer" output="screen" ns="/$(arg drone_name)">
+  <node pkg="espdrone_utils" type="simple_camera_streamer.py" name="camera_streamer" output="screen" ns="/$(arg drone_name)">
     <param name="drone_ip_addr" type="string" value="$(arg drone_ip_addr)"/>
   </node>
 

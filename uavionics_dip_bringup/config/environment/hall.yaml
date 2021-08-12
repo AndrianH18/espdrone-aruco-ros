@@ -1,5 +1,0 @@
-aruco_marker_size     : 0.16
-aruco_map_config_file : "hall_map.yml"
-world_to_marker_map_tf: "0 0 0 0.5 -0.5 -0.5 0.5"
-marker_map_frame      : "aruco_map"
-world_fixed_frame     : "map"
