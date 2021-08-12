@@ -1,0 +1,6 @@
+# 'drone_name' is determined from the title of this YAML file.
+# Refer to README.md for documentation.
+
+drone_ip_addr   : "192.168.0.106"
+camera_info_file: "ost_example.yaml"
+visualize_output: "true"
