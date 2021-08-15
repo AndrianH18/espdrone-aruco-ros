@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch> 
+ 
+  <!-- Image filtering for aruco -->
+  <node pkg="aruco_mapping_filter" type="aruco_mapping_filter" name="aruco_mapping_filter" output="screen">
+    <remap from="camera/image_raw" to="image_rect"/>
+    <remap from="camera/image_raw_filtered" to="image_rect_filtered"/>
+    <param name="threshold" type="int" value="240"/>
+  </node>
+ 
+</launch>

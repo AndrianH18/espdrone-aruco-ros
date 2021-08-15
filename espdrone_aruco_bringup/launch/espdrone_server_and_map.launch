@@ -7,7 +7,7 @@
   <arg name="world_to_marker_map_tf" default="0 0 0 0.5 -0.5 -0.5 0.5"/>
 
   <!-- ESP-drone server -->
-  <node pkg="espdrone_driver" type="espdrone_server.py" name="espdrone_server" output="screen"/>
+  <include file="$(find espdrone_driver)/launch/espdrone_server.launch"/>
 
   <!-- Static tf transform from world fixed frame to marker map frame -->
   <node pkg="tf" type="static_transform_publisher" name="world_to_marker_static_tf"

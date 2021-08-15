@@ -33,13 +33,14 @@
   </include>
   
   <group ns="/$(arg drone_name)">
-
     <!-- Republish camera stream topic published by 'espdrone_server' using image_transport, needed for image_proc -->
     <node pkg="espdrone_utils" type="image_transport_republisher" name="image_transport_republisher" output="screen"/>
 
     <!-- Camera undistortion -->
     <node pkg="image_proc" type="image_proc" name="image_proc" output="screen"/>
 
+    <!-- Image filter to enhance ArUco marker detection -->
+    <include file="$(find aruco_mapping_filter)/launch/aruco_mapping_filter.launch"/>
   </group>
 
   <!-- ArUco mapping stuff -->

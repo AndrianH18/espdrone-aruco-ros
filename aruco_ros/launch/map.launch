@@ -11,7 +11,7 @@
 
     <node pkg="aruco_ros" type="map_single" name="aruco_map_pose_tracker" output="screen">
       <remap from="/camera_info" to="camera_info"/>
-      <remap from="/image" to="image_rect_color"/>
+      <remap from="/image" to="image_rect_filtered"/>
       <param name="map_config" type="string" value="$(arg map_config)"/>
       <param name="marker_size" type="double" value="$(arg marker_size)"/>
       <param name="draw_markers" type="bool" value="true"/>

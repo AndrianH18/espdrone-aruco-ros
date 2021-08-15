@@ -157,8 +157,11 @@ public:
     cv_bridge::CvImagePtr cv_ptr;
 
     try {
-      cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8);
-      inImage = cv_ptr->image;
+      cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
+      
+      // The image is in MONO8 format after passing through the binarization filter, RGB8 is required.
+      cv::cvtColor(cv_ptr->image, inImage, cv::COLOR_GRAY2RGB);
+      // inImage = cv_ptr->image;
 
       markers = mDetector.detect(inImage, camParam, marker_size);
       markers_from_map = mapConfig.getIndices(markers);
