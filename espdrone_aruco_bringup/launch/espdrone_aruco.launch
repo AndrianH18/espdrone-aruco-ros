@@ -21,15 +21,8 @@
     <arg name="enable_parameters" value="True" />
     <arg name="use_ros_time" value="True" />
     <arg name="enable_logging_image" value="True" />
-    <arg name="enable_logging_imu" value="True" />
-    <arg name="enable_logging_battery" value="True" />
-    <arg name="enable_logging_motor" value="True" />
-    <arg name="enable_logging_zranger" value="False" />
     <arg name="enable_logging_pose" value="True" />
-    <arg name="enable_pose_tf_publisher" value="False" />
-    <arg name="enable_logging_setpoint" value="True" />
     <arg name="camera_info_file" value="$(arg camera_info_file)" />
-    <arg name="custom_log_file" value="$(find espdrone_driver)/config/log.yaml"/>
   </include>
   
   <group ns="/$(arg drone_name)">

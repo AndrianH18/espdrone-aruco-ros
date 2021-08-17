@@ -40,7 +40,7 @@ int
 main(int argc, char **argv)
 {
   ros::init(argc, argv, "image_filtering_for_aruco");
-  ros::NodeHandle nh;
+  ros::NodeHandle nh("~");
 
   // Image transport node
   image_transport::ImageTransport it(nh);

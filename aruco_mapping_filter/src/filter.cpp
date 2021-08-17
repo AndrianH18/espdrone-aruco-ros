@@ -43,11 +43,12 @@ namespace image_filtering_for_aruco
 
 Filter::Filter(ros::NodeHandle* nh, image_transport::ImageTransport *it_nh)
 {
-  nh->getParam("threshold",user_threshold);
+  nh->param<int>("window_size", window_size);
+  nh->param<int>("subtraction_const", subtraction_const);
   
-  // If threshold value greater than limit, make it zero 
-  if(user_threshold > 255)
-    user_threshold = 0;
+  // Minimum window size for adaptive thresholding is 3.
+  if (window_size < 3)
+    window_size = 3;
    
   // Filtered image publisher
   filtered_image_pub = it_nh->advertise("camera/image_raw_filtered",1);
@@ -77,8 +78,9 @@ Filter::ImageCallback(const sensor_msgs::ImageConstPtr &original_image)
   // Equalize histogram
   cv::equalizeHist(I_filtered,I_filtered);
 
-  // Treshold
-  cv::threshold(I_filtered,I_filtered,user_threshold,0,3);
+  // Adaptive tresholding
+  cv::adaptiveThreshold(I_filtered, I_filtered, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY,
+                        window_size, subtraction_const);
 
   // Creating filtered image_raw and publishing
   cv_bridge::CvImagePtr in_msg;

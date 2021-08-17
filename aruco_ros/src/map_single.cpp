@@ -159,7 +159,7 @@ public:
     try {
       cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::MONO8);
       
-      // The image is in MONO8 format after passing through the binarization filter, RGB8 is required.
+      // The image is in MONO8 format after passing through 'aruco_mapping_filter', RGB8 is required.
       cv::cvtColor(cv_ptr->image, inImage, cv::COLOR_GRAY2RGB);
       // inImage = cv_ptr->image;
 

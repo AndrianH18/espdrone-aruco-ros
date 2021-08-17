@@ -59,7 +59,8 @@ public:
 
 private:
      /** \brief User threshold loaded from the launch file */
-    int user_threshold;
+    int window_size;
+    int subtraction_const;
     
     /** \brief CV bridge to convert std_msgs::Image to OpenCV format*/
     cv_bridge::CvImagePtr cv_ptr;

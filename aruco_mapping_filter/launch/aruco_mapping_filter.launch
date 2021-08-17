@@ -1,11 +1,15 @@
 <?xml version="1.0"?>
-<launch> 
- 
+<launch>
+  <!-- Configurations for adaptive thresholding -->
+  <arg name="window_size" default="35"/>
+  <arg name="subtraction_const" default="-15"/>
+
   <!-- Image filtering for aruco -->
   <node pkg="aruco_mapping_filter" type="aruco_mapping_filter" name="aruco_mapping_filter" output="screen">
-    <remap from="camera/image_raw" to="image_rect"/>
-    <remap from="camera/image_raw_filtered" to="image_rect_filtered"/>
-    <param name="threshold" type="int" value="240"/>
+    <remap from="aruco_mapping_filter/camera/image_raw" to="image_rect"/>
+    <remap from="aruco_mapping_filter/camera/image_raw_filtered" to="image_rect_filtered"/>
+    <param name="window_size" type="int" value="$(arg window_size)"/>
+    <param name="subtraction_const" type="int" value="$(arg subtraction_const)"/>
   </node>
  
 </launch>
