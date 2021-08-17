@@ -39,8 +39,8 @@
   <!-- ArUco mapping stuff -->
 
   <!-- Remap 'position' topic published by 'aruco_map_pose_tracker' node into '/<drone_name>/external_position' subscribed
-       by 'espdrone_server'. This will force-update the ESP-drone's internal position estimate (since our goal is to use the
-       onboard camera and the ArUco marker map as positioning system).
+       by 'espdrone_server'. This will feed the position estimate from 'aruco_map_pose_tracker' to the drone's Kalman
+       filter (our goal is to use the onboard camera and the ArUco marker map as positioning system).
    -->
   <remap from="/$(arg drone_name)/aruco_map_pose_tracker/position" to="/$(arg drone_name)/external_position"/>
 
