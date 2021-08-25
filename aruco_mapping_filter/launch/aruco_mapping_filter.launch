@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <launch>
   <!-- Configurations for adaptive thresholding -->
-  <arg name="window_size" default="35"/>
-  <arg name="subtraction_const" default="-15"/>
+  <arg name="window_size" default="45"/>
+  <arg name="subtraction_const" default="-20"/>
 
   <!-- Image filtering for aruco -->
   <node pkg="aruco_mapping_filter" type="aruco_mapping_filter" name="aruco_mapping_filter" output="screen">

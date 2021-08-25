@@ -79,8 +79,8 @@ Filter::ImageCallback(const sensor_msgs::ImageConstPtr &original_image)
   cv::equalizeHist(I_filtered,I_filtered);
 
   // Adaptive tresholding
-  cv::adaptiveThreshold(I_filtered, I_filtered, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY,
-                        window_size, subtraction_const);
+  // cv::adaptiveThreshold(I_filtered, I_filtered, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY,
+  //                       window_size, subtraction_const);
 
   // Creating filtered image_raw and publishing
   cv_bridge::CvImagePtr in_msg;

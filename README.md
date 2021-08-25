@@ -88,7 +88,7 @@ Since we rely on vision markers for localization, it is important to calibrate t
    ```
    A calibration window showing the camera feed from the drone should then appear. A warning on the terminal saying "Camera calibration file not specified" is normal.
 3. Try to get all bars on the calibration window to show green and be long enough, then click "Calibrate". The calculation can take some time. *It is okay to switch the drone off.*
-4. After the calibration is complete, click "Save" on the calibration window. The full path to the saved calibration data is `/tmp/calibrationdata.tar.gz`. After the terminal reports that the calibration data has been saved, you may shut down the ROS (`Ctrl` + `C` on the terminal).
+4. After the calibration is complete, **click "Save" on the calibration window**. The full path to the saved calibration data is `/tmp/calibrationdata.tar.gz`. After the terminal reports that the calibration data has been saved, you may shut down the ROS (`Ctrl` + `C` on the terminal).
 5. Unzip the saved file, then copy and rename the calibration file to the `espdrone_aruco_bringup` folder. **Replace `<new_file_name>` below with a sensible name, so you can identify which drone the camera is attached to.**
    ```bash
    # Unzip the calibration data...
