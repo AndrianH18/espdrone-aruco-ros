@@ -1,6 +1,8 @@
 # espdrone-aruco-ros
 This repository contains ROS packages for ESP-drone camera data processing and ArUco marker detection.
 
+![demo_gif](./documentation/demo_flight.gif)
+
 This stack works in conjunction with [`espdrone-ros`](https://github.com/NelsenEW/espdrone-ros), a set of ROS packages for interfacing with the ESP-drone using ROS, including for fetching camera image from the drone. Both this repository and `espdrone-ros` are specialized for the NTU EEE UAVIONICS DIP project.
 
 This stack as well as `aruco-3.1.12`, the required dependency not in this repository, have been tested on **Ubuntu 20.04 and ROS Noetic**.
