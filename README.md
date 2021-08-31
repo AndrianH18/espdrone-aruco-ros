@@ -1,5 +1,5 @@
 # espdrone-aruco-ros
-This repository contains ROS packages for ESP-drone camera data processing and ArUco marker detection.
+This repository contains ROS packages for ESP-drone camera image processing and ArUco marker detection and pose tracking.
 
 ![demo_gif](./documentation/demo_flight.gif)
 
@@ -9,7 +9,7 @@ This stack as well as `aruco-3.1.12`, the required dependency not in this reposi
 
 
 ## Overview
-The packages in this repository allow for **processing the camera data from multiple ESP-drones concurrently**, specifically to:
+The packages in this repository allow for **processing the camera image from multiple ESP-drones concurrently**, specifically to:
 * Process the camera image using ROS `image_proc`, e.g. for camera undistortion and convertion to grayscale (`MONO8`) format
 * Perform pose estimation (position and orientation) of the camera/drone using multiple [ArUco](https://www.uco.es/investiga/grupos/ava/node/26) fiducial markers scattered across the drone's environment, forming a [marker map](http://www.uco.es/investiga/grupos/ava/node/57)
 
@@ -19,7 +19,7 @@ The stack has been tested to run on a Raspberry Pi 4B (8GB model) running Ubuntu
 
 
 ## Setup
-The steps here assume that you already have ROS and Catkin workspace setup. If you have not done so, check out how to install ROS in the [official Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu), then run these to create a Catkin workspace:
+The steps here assume that you already have ROS and Catkin workspace setup or that you use the [`espdrone` Docker image for this project](https://hub.docker.com/r/nelsenew/espdrone). If you do not, check out how to install ROS in the [official Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu), and then run these to create a Catkin workspace:
 ```bash
 source /opt/ros/noetic/setup.bash
 mkdir -p ~/catkin_ws/src
@@ -30,9 +30,13 @@ catkin build
 echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
-If you already have ROS and Catkin workspace setup:
-1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in your home directory (i.e. `/home/<your_username>/`). 
-2. Clone this repository to your Catkin workspace's `src` folder.  
+  
+If you use the `espdrone` Docker image, your Catkin workspace will be in the root directory of your Docker volume (i.e. `/catkin_ws`) instead of `~/catkin_ws`. In that case, replace any related commands (e.g. do `cd /catkin_ws/src` instead of `cd ~/catkin_ws/src`). Also, *please pay attention to special notes with "**For Docker setup:**" in bold.*
+  
+Steps to perform:
+1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in your home directory (i.e. `/home/<your_username>/`).  
+   ***For Docker setup:** you can put this library in the root directory of your Docker volume.*
+3. Clone this repository to your Catkin workspace's `src` folder.  
    ```bash
    cd ~/catkin_ws/src
    git clone https://github.com/AndrianH18/espdrone-aruco-ros.git
@@ -42,6 +46,7 @@ If you already have ROS and Catkin workspace setup:
    cd ~/catkin_ws
    catkin build
    ```
+   ***For Docker setup:** since the ArUco library is in the root directory of the Docker volume, you need to modify line 6 in `aruco_lib_integration/CMakeLists.txt` to reflect the correct path to the ArUco library, i.e. `SOURCE_DIR /aruco-3.1.12` instead of `SOURCE_DIR /home/$ENV{USER}/aruco-3.1.12`.*
 
 
 ## Usage
@@ -153,7 +158,6 @@ rostopic echo /<drone_name>/aruco_map_pose_tracker/pose
 The estimated position (pose but without the orientation data) is also published to `/<drone_name>/aruco_map_pose_tracker/position`, but this topic is remapped to `/<drone_name>/external_position` (a topic subscribed by `espdrone_server`). As the result, the position estimation is fed into the ESP-drone's Kalman filter as input data.
 
  If visualization is enabled inside the drones' YAML config files, a window showing the camera stream and ArUco markers detected for each drone will appear.
-
 
 ## Notes Regarding ROS Implementation
 
