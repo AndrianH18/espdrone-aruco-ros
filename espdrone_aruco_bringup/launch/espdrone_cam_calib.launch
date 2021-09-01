@@ -5,7 +5,7 @@
   
   <!-- Configurations -->
   <arg name="drone_name" default="espdrone"/>
-  <arg name="drone_ip_addr" default="192.168.43.42"/>
+  <arg name="drone_ip_addr" default="192.168.0.104"/>
   <arg name="checkerboard" default="7x9"/>
   <arg name="square_size" default="0.02"/>
 

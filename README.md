@@ -138,14 +138,14 @@ You can launch multiple ESP-drones at once in the same envinronment. Before doin
 
 After the configuration files have been setup, the drones can be launched by using the `launch_espdrone_aruco.py` Python script inside the `espdrone_aruco_bringup` package, specifying the drone(s) to launch and the environment.
 
-**Example:** to launch `espdrone1` and `espdrone2` described by `espdrone1.yaml` and `espdrone2.yaml`, in the IoT Lab environment described by `iot_lab.yaml`...
+**Example:** to launch `espdrone1` and `espdrone2` described by `espdrone1.yaml` and `espdrone2.yaml`, in the IoT Lab environment described by `iot_lab.yaml`... and with keyboard control
 ```bash
 cd ~/catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/script
-python3 launch_espdrone_aruco.py -d espdrone1 espdrone2 -e iot_lab
+python3 launch_espdrone_aruco.py -d espdrone1 espdrone2 -e iot_lab --keyboard
 
 # or alternatively
 
-python3 launch_espdrone_aruco.py --drones espdrone1 espdrone2 --env iot_lab
+python3 launch_espdrone_aruco.py --drones espdrone1 espdrone2 --env iot_lab -k
 ```
 
  The result of the pose estimation can be obtained from the ROS topic `/<drone_name>/aruco_map_pose_tracker/pose`.
