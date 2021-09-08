@@ -5,7 +5,7 @@ This repository contains ROS packages for ESP-drone camera image processing and 
 
 This stack works in conjunction with [`espdrone-ros`](https://github.com/NelsenEW/espdrone-ros), a set of ROS packages for interfacing with the ESP-drone using ROS, including for fetching camera image from the drone. Both this repository and `espdrone-ros` are specialized for the NTU EEE UAVIONICS DIP project.
 
-This stack as well as `aruco-3.1.12`, the required dependency not in this repository, have been tested on **Ubuntu 20.04 and ROS Noetic**.
+This stack as well as `aruco-3.1.12`, the required dependency not in this repository, have been tested on **Ubuntu 20.04 and ROS Noetic** (both using Docker and native system installation).
 
 
 ## Overview
@@ -15,11 +15,16 @@ The packages in this repository allow for **processing the camera image from mul
 
 Pose estimation is possible if at least 2 ArUco markers are in the field of view of the drone's camera.
 
-The stack has been tested to run on a Raspberry Pi 4B (8GB model) running Ubuntu 20.04 MATE, though a computer with a more powerful CPU is highly recommended if you intend to launch more than one ESP-drones.
+## Computer Hardware Requirement
+This stack is CPU bound; no powerful GPU is required. The stack has been tested to run fine on a Raspberry Pi 4B (8GB model) running Ubuntu 20.04 MATE, though a computer with a more powerful CPU is required if you intend to launch more than one ESP-drones.  
+
+The computer running this stack also needs to connect to the same network as the ESP-drone(s).
 
 
 ## Setup
-The steps here assume that you use the [`espdrone` Docker image for this project](https://hub.docker.com/r/nelsenew/espdrone). If you would like to install natively, check out how to install ROS in the [official Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu), and then run these to create a Catkin workspace:
+The steps here assume that you use the [`espdrone` Docker image for this project](https://hub.docker.com/r/nelsenew/espdrone). Continue to "**Steps to perform**" if that is the case for you.
+
+If you would like to install natively instead of using Docker, make sure that you have *ROS Noetic* setup in your system. If you have not done so, check out how to install ROS in the [official Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu), then run these to create a Catkin workspace:
 ```bash
 source /opt/ros/noetic/setup.bash
 mkdir -p ~/catkin_ws/src
@@ -31,9 +36,9 @@ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
   
-For the `espdrone` Docker image, your Catkin workspace will be in the root directory of your Docker volume (i.e. `/catkin_ws`) instead of `~/catkin_ws`. If you do not use Docker and install everything natively, replace any related commands (e.g. do `cd ~/catkin_ws/src` instead of `cd /catkin_ws/src`). Also, *please pay attention to special notes with "**For native system setup:**" in bold.*
+For the `espdrone` Docker image, the Catkin workspace will be in the root directory of your Docker volume (i.e. `/catkin_ws`) instead of `~/catkin_ws`. Hence, for native system install, **replace any related commands (e.g. do `cd ~/catkin_ws/src` instead of `cd /catkin_ws/src`)**. Also, *please pay attention to special notes with "**For native system setup:**" in bold.*
   
-Steps to perform:
+**Steps to perform:**
 1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in the root directory of the Docker volume (i.e. `/`).  
    ***For native system setup:** you can put this library in your home directory (i.e. `~`).*
 3. Clone this repository to your Catkin workspace's `src` folder.  
@@ -46,7 +51,7 @@ Steps to perform:
    cd /catkin_ws
    catkin build
    ```
-   ***For Docker setup:** since the ArUco library is in the home directory for your case, you need to modify line 6 in `aruco_lib_integration/CMakeLists.txt` to reflect the correct path to the ArUco library, i.e. `SOURCE_DIR /home/$ENV{USER}/aruco-3.1.12` instead of `SOURCE_DIR /aruco-3.1.12`.*
+   ***For native system setup:** since the ArUco library is in the home directory for your case, you need to modify line 6 in `aruco_lib_integration/CMakeLists.txt` to reflect the correct path to the ArUco library, i.e. `SOURCE_DIR /home/$ENV{USER}/aruco-3.1.12` instead of `SOURCE_DIR /aruco-3.1.12`.*
 
 
 ## Usage
@@ -88,7 +93,7 @@ The app/program will output a YML file as the map. **Copy this file to `espdrone
 
 ### 3. Calibrating the Drone's Camera
 Since we rely on vision markers for localization, it is important to calibrate the camera of the drone (especially for wide-angle lenses). Perform the following steps **for each drone (camera)**:
-1. Prepare a camera calibration checkerboard, such as [this one](https://github.com/AndrianH18/espdrone-aruco-ros/blob/main/documentation/checkerboard_7x9_20mm.pdf). Make sure to **print it on an A4 paper with 100% scale (no zooming)**. Then, turn on the ESP-drone and make sure that the drone and your computer are connected to the same Wifi network.
+1. Prepare a camera calibration checkerboard, such as [this one](https://github.com/AndrianH18/espdrone-aruco-ros/blob/main/documentation/checkerboard_7x9_20mm.pdf) (make sure to **print it on an A4 paper with 100% scale, no zooming** for this PDF). Then, turn on the ESP-drone and make sure that the drone and your computer are connected to the same Wifi network.
 2. Launch the following launch file for camera calibration, **specifying the IP address of the drone** and the checkerboard size and square size (in meters). For example:
    ```bash
    roslaunch espdrone_aruco_bringup espdrone_cam_calib.launch drone_ip_addr:=192.168.0.112 checkerboard:=7x9 square_size:=0.02
@@ -103,7 +108,7 @@ Since we rely on vision markers for localization, it is important to calibrate t
    tar -xvf calibrationdata.tar.gz
 
    # Copy the file to 'espdrone_aruco_bringup' and rename it...
-   cd ~/catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/config/espdrone/camera_calib/
+   cd /catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/config/espdrone/camera_calib/
    cp /tmp/ost.yaml ./<new_file_name>.yaml
    ```
 
@@ -140,7 +145,7 @@ After the configuration files have been setup, the drones can be launched by usi
 
 **Example:** to launch `espdrone1` and `espdrone2` described by `espdrone1.yaml` and `espdrone2.yaml` with the ability to use keyboard control, in the IoT Lab environment described by `iot_lab.yaml`...
 ```bash
-cd ~/catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/script
+cd /catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/script
 python3 launch_espdrone_aruco.py -d espdrone1 espdrone2 -e iot_lab --keyboard
 
 # or alternatively
