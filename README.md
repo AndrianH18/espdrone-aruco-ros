@@ -19,7 +19,7 @@ The stack has been tested to run on a Raspberry Pi 4B (8GB model) running Ubuntu
 
 
 ## Setup
-The steps here assume that you already have ROS and Catkin workspace setup or that you use the [`espdrone` Docker image for this project](https://hub.docker.com/r/nelsenew/espdrone). If you do not, check out how to install ROS in the [official Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu), and then run these to create a Catkin workspace:
+The steps here assume that you use the [`espdrone` Docker image for this project](https://hub.docker.com/r/nelsenew/espdrone). If you would like to install natively, check out how to install ROS in the [official Wiki](http://wiki.ros.org/noetic/Installation/Ubuntu), and then run these to create a Catkin workspace:
 ```bash
 source /opt/ros/noetic/setup.bash
 mkdir -p ~/catkin_ws/src
@@ -31,22 +31,22 @@ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
   
-If you use the `espdrone` Docker image, your Catkin workspace will be in the root directory of your Docker volume (i.e. `/catkin_ws`) instead of `~/catkin_ws`. In that case, replace any related commands (e.g. do `cd /catkin_ws/src` instead of `cd ~/catkin_ws/src`). Also, *please pay attention to special notes with "**For Docker setup:**" in bold.*
+For the `espdrone` Docker image, your Catkin workspace will be in the root directory of your Docker volume (i.e. `/catkin_ws`) instead of `~/catkin_ws`. If you do not use Docker and install everything natively, replace any related commands (e.g. do `cd ~/catkin_ws/src` instead of `cd /catkin_ws/src`). Also, *please pay attention to special notes with "**For native system setup:**" in bold.*
   
 Steps to perform:
-1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in your home directory (i.e. `/home/<your_username>/`).  
-   ***For Docker setup:** you can put this library in the root directory of your Docker volume.*
+1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in the root directory of the Docker volume (i.e. `/`).  
+   ***For native system setup:** you can put this library in your home directory (i.e. `~`).*
 3. Clone this repository to your Catkin workspace's `src` folder.  
    ```bash
-   cd ~/catkin_ws/src
+   cd /catkin_ws/src
    git clone https://github.com/AndrianH18/espdrone-aruco-ros.git
    ```
 3. Build the workspace:
    ```bash
-   cd ~/catkin_ws
+   cd /catkin_ws
    catkin build
    ```
-   ***For Docker setup:** since the ArUco library is in the root directory of the Docker volume, you need to modify line 6 in `aruco_lib_integration/CMakeLists.txt` to reflect the correct path to the ArUco library, i.e. `SOURCE_DIR /aruco-3.1.12` instead of `SOURCE_DIR /home/$ENV{USER}/aruco-3.1.12`.*
+   ***For Docker setup:** since the ArUco library is in the home directory for your case, you need to modify line 6 in `aruco_lib_integration/CMakeLists.txt` to reflect the correct path to the ArUco library, i.e. `SOURCE_DIR /home/$ENV{USER}/aruco-3.1.12` instead of `SOURCE_DIR /aruco-3.1.12`.*
 
 
 ## Usage
@@ -138,7 +138,7 @@ You can launch multiple ESP-drones at once in the same envinronment. Before doin
 
 After the configuration files have been setup, the drones can be launched by using the `launch_espdrone_aruco.py` Python script inside the `espdrone_aruco_bringup` package, specifying the drone(s) to launch and the environment.
 
-**Example:** to launch `espdrone1` and `espdrone2` described by `espdrone1.yaml` and `espdrone2.yaml`, in the IoT Lab environment described by `iot_lab.yaml`... and with keyboard control
+**Example:** to launch `espdrone1` and `espdrone2` described by `espdrone1.yaml` and `espdrone2.yaml` with the ability to use keyboard control, in the IoT Lab environment described by `iot_lab.yaml`...
 ```bash
 cd ~/catkin_ws/src/espdrone-aruco-ros/espdrone_aruco_bringup/script
 python3 launch_espdrone_aruco.py -d espdrone1 espdrone2 -e iot_lab --keyboard
