@@ -39,8 +39,9 @@ source ~/.bashrc
 For the `espdrone` Docker image, the Catkin workspace will be in the root directory of your Docker volume (i.e. `/catkin_ws`) instead of `~/catkin_ws`. Hence, for native system install, **replace any related commands (e.g. do `cd ~/catkin_ws/src` instead of `cd /catkin_ws/src`)**. Also, *please pay attention to special notes with "**For native system setup:**" in bold.*
   
 **Steps to perform:**
-1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in the root directory of the Docker volume (i.e. `/`).  
-   ***For native system setup:** you can put this library in your home directory (i.e. `~`).*
+1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in the root directory of the Docker volume (i.e. `/`). **Do NOT** run `make` and `make install`; just put the library there.  
+   ***For native system setup:**  
+   You can put this library in your home directory (i.e. `~`).*
 3. Clone this repository to your Catkin workspace's `src` folder.  
    ```bash
    cd /catkin_ws/src
@@ -51,7 +52,8 @@ For the `espdrone` Docker image, the Catkin workspace will be in the root direct
    cd /catkin_ws
    catkin build
    ```
-   ***For native system setup:** since the ArUco library is in the home directory for your case, you need to modify line 6 in `aruco_lib_integration/CMakeLists.txt` to reflect the correct path to the ArUco library, i.e. `SOURCE_DIR /home/$ENV{USER}/aruco-3.1.12` instead of `SOURCE_DIR /aruco-3.1.12`.*
+   ***For native system setup:**  
+   Since the ArUco library is in the home directory for your case, you need to modify line 6 in `aruco_lib_integration/CMakeLists.txt` to reflect the correct path to the ArUco library, i.e. `SOURCE_DIR /home/$ENV{USER}/aruco-3.1.12` instead of `SOURCE_DIR /aruco-3.1.12`.*
 
 
 ## Usage
@@ -74,7 +76,9 @@ Enough number of ArUco markers need to be pasted evenly across the room/environm
 **Example (obtained from [here](http://www.uco.es/investiga/grupos/ava/node/57)):**
 ![room_setup_example](./documentation/img/room_setup_example.png)
 
-There are several dictionaries (variants) of ArUco markers available. We recommend using the `ARUCO_MIP_36h12` library available for download [here](https://sourceforge.net/projects/aruco/files/aruco_mip_36h12_pdf.zip/download). 
+There are several dictionaries (variants) of ArUco markers available. We recommend using the `ARUCO_MIP_36h12` library available for download [here](https://sourceforge.net/projects/aruco/files/aruco_mip_36h12_pdf.zip/download).  
+  
+If you would like to combine 2 sheets of paper into a bigger ArUco marker, we have provided 20 split `ARUCO_MIP_36h12` markers [here](./documentation/aruco_mip_36h12_a3_size.rar). You can print these in A4 and combine them into (almost) A3 size.
 
 **Important notes!**
 * Each ArUco marker has its own numerical ID, 0 to 249 in the case of `ARUCO_MIP_36h12`. Make sure to keep track of which marker has which ID when you print them. Each marker has its ID faintly written on the bottom left corner.
