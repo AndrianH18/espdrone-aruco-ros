@@ -87,7 +87,7 @@ def get_espdrone_launch_config(
             keyboard_launch_args = [f"drone_name:={drone_name}"]
             if "waypoints_list" in drone_config:
                 keyboard_launch_args.append(
-                    [f"waypoints_list:={drone_config['waypoints_list']}"]
+                    f"waypoints_list:={drone_config['waypoints_list']}"
                 )
             keyboard_launch_file = roslaunch.rlutil.resolve_launch_arguments(
                 keyboard_launch

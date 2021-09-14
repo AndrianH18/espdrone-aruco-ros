@@ -39,10 +39,9 @@ source ~/.bashrc
 For the `espdrone` Docker image, the Catkin workspace will be in the root directory of your Docker volume (i.e. `/catkin_ws`) instead of `~/catkin_ws`. Hence, for native system install, **replace any related commands (e.g. do `cd ~/catkin_ws/src` instead of `cd /catkin_ws/src`)**. Also, *please pay attention to special notes with "**For native system setup:**" in bold.*
   
 **Steps to perform:**
-1. Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in the root directory of the Docker volume (i.e. `/`). **Do NOT** run `make` and `make install`; just put the library there.  
-   ***For native system setup:**  
-   You can put this library in your home directory (i.e. `~`).*
-3. Clone this repository to your Catkin workspace's `src` folder.  
+1. ***For native system setup (skip this if you use Docker):***  
+   Download the `aruco-3.1.12` library [from here](https://sourceforge.net/projects/aruco/files/3.1.12/), then put it in your home directory (i.e. `~`). **Do NOT** run `make` and `make install`; just put the library there. 
+2. Clone this repository to your Catkin workspace's `src` folder.  
    ```bash
    cd /catkin_ws/src
    git clone https://github.com/AndrianH18/espdrone-aruco-ros.git
